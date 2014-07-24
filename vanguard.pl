@@ -50,7 +50,8 @@ sub _set_vanguard {
 
 	my $chan = Irssi::channel_find($channel);
 
-	$topic =~ s/Vanguard: [^|]* \|/Vanguard: $nick |/;
+	$topic =~ s/Vanguard:(\s*\([^)]*\)(:|)|)(\s*)[^|]*\s*\|/Vanguard:\1 $nick |/;
+
 	my $cmd = "TOPIC $channel :$topic";
 	$server->send_raw($cmd) if $chan->{'topic'} ne $topic;
 }
