@@ -22,7 +22,7 @@ sub _current_vanguard {
 
 	my $nick = "";
 
-	if ($topic =~ /.*Vanguard(\s*\([^)]*\)(:|)|)(\s*)([^|]*)\s*\|.*/) {
+	if ($topic =~ /.*anguard(\s*\([^)]*\)\s*|)(:|)(\s*)([^| ]*)\s*\|/) {
 		$nick = $4;
 	}
 
@@ -50,7 +50,14 @@ sub _set_vanguard {
 
 	my $chan = Irssi::channel_find($channel);
 
-	$topic =~ s/Vanguard(\s*\([^)]*\)(:|)|)(\s*)[^|]*\s*\|/Vanguard\1 $nick |/;
+	my $t = $topic;
+	$t =~ /anguard(\s*\([^)]*\)(:|)|)(\s*)[^|]*/;
+	my $new_sub = "anguard" . $1;
+	if ($2 =~ /^$/) {
+		$new_sub .= ":";
+	}
+	$new_sub .= " " . $nick . " ";
+	$topic =~ s/anguard(\s*\([^)]*\)(:|)|)(\s*)[^|]*/$new_sub/;
 
 	my $cmd = "TOPIC $channel :$topic";
 	$server->send_raw($cmd) if $chan->{'topic'} ne $topic;
@@ -72,7 +79,7 @@ sub vanoff {
 	if ($nick eq $current_vanguard) {
 		_set_vanguard('cihelp', @_);
 	} else {
-		print("You are not the current vanguard so not setting to 'cihelp'");
+		print("You are not the current vanguard so not setting to 'cihelp' '" . $current_vanguard . "', '" . $nick . "'");
 	}
 }
 
